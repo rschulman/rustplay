@@ -1,13 +1,19 @@
 #![no_std]
 #![allow_ctypes]
+#![no_main]
 
 extern crate core;
 
 mod video;
 
-#[lang="start"]
+extern "rust-intrinsic" { fn abort() -> !; }
+
 #[no_mangle]
-#[no_split_stack]
-pub fn kernel_main() {
-  video::clear_screen(video::Red);
+pub extern fn rust_stack_exhausted() {
+  unsafe { abort() }
+}
+
+#[no_mangle]
+pub extern "C" fn kernel_main () {
+  unsafe {video::clear_screen(video::Red);}
 }
